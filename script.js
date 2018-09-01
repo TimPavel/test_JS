@@ -15,7 +15,7 @@ Container.prototype.render = function() {
 };
 
 Container.prototype.remove = function () {
-	var node = document.getElementById(this.id);
+	var node = document.getElementById(this.id);// ??
 	console.log(node);
 
 	node.parentElement.removeChild(node);
