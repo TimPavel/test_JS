@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+				content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>HomeWork_2-1_2</title>
+	<script>
+		function Container(id, className) {
+			this.id = id;
+			this.class = className;
+		}
+
+		Container.prototype.render = function() {
+			var div = document.createElement('div');
+
+			div.className = this.className;
+			div.id = this.id;
+
+			return div;
+		};
+		
+		Container.prototype.remove = function () {
+			var node = document.getElementById(this.id);
+			node.parentElement.removeChild(node);
+		};
+  
+		function Menu(id, className, items) {
+			Container.call(this, id, className);
+			this.items = items;
+		}
+
+		Menu.prototype = Object.create(Container.prototype);
+		Menu.prototype.render = function() {
+			var ul = document.createElement('ul');
+			ul.className = this.class;
+			ul.id = this.id;
+
+			this.items.forEach(function(item) {
+				if (item instanceof Container) {
+					ul.appendChild(item.render());
+				}
+			});
+
+			return ul;
+		};
+
+		Menu.prototype.remove = function() {
+			var elem = document.querySelector('ul');
+			elem.remove();
+		};
+	
+		function MenuItem(href, label) {
+			Container.call(this, '', 'menu-item');
+
+			this.href = href;
+			this.label = label;
+		}
+
+		MenuItem.prototype = Object.create(Container.prototype);
+		MenuItem.prototype.render = function() {
+			var li = document.createElement('li');
+			var a = document.createElement('a');
+
+			a.href = this.href;
+			a.textContent = this.label;
+
+			li.appendChild(a);
+			li.className = this.class;
+
+			return li;
+		};
+		
+		function SubMenu(className, id, items, title, href) {
+			
+			Menu.call(this, className, id, items);
+			this.title = title;
+			this.href = href;
+		}
+		
+		Submenu.prototype = Object.create(Menu.prototype);
+		
+		SubMenu.prototype.render = function() {
+			if (this.title && this.href) {
+				var menuItem = new MenuItem(this.title, this.href).render();
+				menuItem.appendChild(Menu.prototype.render.call(this));  // ?
+			
+				return menuItem;
+			} else {
+				return Menu.prototype.render.call(this);
+			}
+		};
+		
+		window.onload = function() {
+			var items =  [
+				new MenuItem('/', 'Home'),
+				new MenuItem('/news', 'News'),
+				new MenuItem('/blog', 'Blog'),
+				new SubMenu('childMenu', 'childMenu' [
+					new MenuItem('/', 'Home'),
+					new MenuItem('/news', 'News'),
+					new MenuItem('/blog', 'Blog')
+					], 'childMenu', 'childMenu')
+			];
+			
+			var menu = new SubMenu('menu', 'menu', items);
+			document.body.appendChild(menu.render());
+			
+			var buttonDeleteMenu = document.createElement('button');
+			buttonDeleteMenu.textContent = 'Удалить меню';
+			document.body.appendChild(buttonDeleteMenu);
+			buttonDeleteMenu.addEventListener('click', menu.remove);
+
+			var buttonDeleteItem = document.createElement('button');
+			buttonDeleteItem.textContent = 'Удалить пункт меню';
+			document.body.appendChild(buttonDeleteItem);
+			buttonDeleteItem.addEventListener('click', function() {
+				var menuItemNode = document.querySelector('li');
+				menuItemNode.parentElement.removeChild(menuItemNode);
+			});
+			
+		}
+	</script>
+</head>
+<body>
+
+</body>
+</html>
